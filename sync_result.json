@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-09-06T15:50:01.218982",
+  "config": {
+    "email_provider": "feishu",
+    "email_username": "miaomiao@basebitable.fun",
+    "email_count": 3
+  },
+  "results": [
+    {
+      "id": "1",
+      "subject": "欢迎使用飞书邮箱！",
+      "from": "\"Feishu Mail\" <mail-noreply@feishu.cn>",
+      "to": "<miaomiao@basebitable.fun>",
+      "date": "Fri, 20 Dec 2024 08:44:06 +0800",
+      "body": "colan，你好! 很高兴你开始使用飞书邮箱 接下来，让我带你一起感受，如何在飞书邮箱的陪伴下高效工作 “邮箱助手” 在消息页送上新邮件简要在聊天界面收到“邮箱助手”的提醒，让你不打开邮箱也能够快速浏览邮件要点，筛选需要处理的重要邮件。 [image] 切换“邮件浏览方式”快速补充上下文浏览到一封重要邮件，你在“往来邮件按主题合并”模式下快速回忆起事件上下文。 [image] “分享邮件至会话”，一键召齐相关方你将需要跟进的邮件直接分享至飞书的项目群聊内，大家很快浏览完内容，开始讨论。 [image] “智能收信规则”让你安心专注手头事群聊内讨论进行中，你又收到了其他工作邮件，但不用分神，因为”收信规则“能够自动执行邮件归类、添加标签等动作，方便稍后处理。 [image] “独立窗口打开”助你无缝衔接讨论和决定群聊讨论接近尾声，你在飞书桌面端同时打开邮箱独立窗口，把结论要点轻松放进回复邮件。 [image] 邮件发出，信息安全无忧你将重要的讨论结果使用飞书邮箱发出。不必有任何担心，因为我们将你的所有数据安全存储在数据中心。我们采用业界领先的垃圾邮件检测，防止网络钓鱼攻击，并保护您的附件免受任何类型的攻击。 [image] 从今天起，让飞书邮箱做你的高效伙伴 更多关于飞书邮箱的信息和使用指南，请点击：帮助中心",
+      "attachments": []
+    },
+    {
+      "id": "2",
+      "subject": "11",
+      "from": "<miaomiao@basebitable.fun>",
+      "to": "<miaomiao@basebitable.fun>",
+      "date": "Fri, 20 Dec 2024 09:03:35 +0800",
+      "body": "111该邮件由多维表格自动发送\n来自 电影院数据<https://j0igx4dfvcg.feishu.cn/base/R3FabsPIBa2xKDsqZLfcNKn4nmh>",
+      "attachments": []
+    },
+    {
+      "id": "3",
+      "subject": "Fw: 个人信用报告查询",
+      "from": "\"柯蓝 简历\" <190513120@qq.com>",
+      "to": "\"miaomiao\" <miaomiao@basebitable.fun>",
+      "date": "Sat, 6 Sep 2025 14:28:25 +0800",
+      "body": "测试\r\n\r\n发自我的iPhone\r\n\r\n\r\n------------------ 原始邮件 ------------------\r\n发件人: 95555 <95555@message.cmbchina.com&gt;\r\n发送时间: 2021年1月8日 08:11\r\n收件人: 190513120 <190513120@qq.com&gt;\r\n主题: Fw: 个人信用报告查询\r\n\r\n\r\n\r\n\r\n尊敬的柯蓝：\r\n \r\n&nbsp;&nbsp;&nbsp;&nbsp;您好！附件是您2021年01月08日通过招商银行申请的个人信用报告，请查收。\r\n \r\n&nbsp;&nbsp;&nbsp;&nbsp;基于安全考虑，附件已加密，解压码请在招商银行App“个人信用报告”的查询记录中查看。\r\n \r\n&nbsp;&nbsp;&nbsp;&nbsp;温馨提示：您下载的是压缩文件，建议从电脑端解压查阅。\r\n \r\n&nbsp;&nbsp;&nbsp;&nbsp;本邮件内容是根据招商银行客户提供的个人邮箱发送给其本人的电子邮件，如阁下并非抬头标明的收件人，请您即刻删除本邮件，勿以任何形式使用及传播本邮件内容，谢谢！\r\n \r\n招商银行 \r\n 2021年01月08日",
+      "attachments": [
+        {
+          "filename": "个人信用报告.zip",
+          "size": 116633,
+          "content_type": "application/octet-stream"
+        }
+      ]
+    }
+  ]
+}
