@@ -35,12 +35,13 @@ on:
           - qq
           - 163
           - 126
-
       email_count:
         description: '获取邮件数量'
         required: false
         default: '10'
         type: string
+  repository_dispatch:
+    types: [email-sync]
 
 jobs:
   sync-emails:
@@ -62,14 +63,13 @@ jobs:
     
     - name: Run email sync
       env:
-        BITABLE_URL: ${{ github.event.inputs.bitable_url }}
-        APP_TOKEN: ${{ github.event.inputs.app_token }}
-        PERSONAL_BASE_TOKEN: ${{ github.event.inputs.personal_base_token }}
-        EMAIL_USERNAME: ${{ github.event.inputs.email_username }}
-        EMAIL_PASSWORD: ${{ github.event.inputs.email_password }}
-        EMAIL_PROVIDER: ${{ github.event.inputs.email_provider }}
-
-        EMAIL_COUNT: ${{ github.event.inputs.email_count }}
+        BITABLE_URL: ${{ github.event.inputs.bitable_url || github.event.client_payload.bitable_url }}
+        APP_TOKEN: ${{ github.event.inputs.app_token || github.event.client_payload.app_token }}
+        PERSONAL_BASE_TOKEN: ${{ github.event.inputs.personal_base_token || github.event.client_payload.personal_base_token }}
+        EMAIL_USERNAME: ${{ github.event.inputs.email_username || github.event.client_payload.email_username }}
+        EMAIL_PASSWORD: ${{ github.event.inputs.email_password || github.event.client_payload.email_password }}
+        EMAIL_PROVIDER: ${{ github.event.inputs.email_provider || github.event.client_payload.email_provider || 'feishu' }}
+        EMAIL_COUNT: ${{ github.event.inputs.email_count || github.event.client_payload.email_count || '10' }}
       run: |
         python email_sync_action.py
     
