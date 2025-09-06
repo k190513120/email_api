@@ -74,7 +74,7 @@ jobs:
         python email_sync_action.py
     
     - name: Upload sync results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: sync-results
