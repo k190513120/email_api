@@ -18,6 +18,12 @@ except ImportError:
     email = None
     decode_header = None
 
+# 导入兼容性处理模块
+try:
+    from email_compat import EmailCompat
+except ImportError:
+    EmailCompat = None
+
 class IMAPEmailClient:
     """IMAP邮箱客户端类"""
     
@@ -210,22 +216,34 @@ class IMAPEmailClient:
                 
                 # 检查email模块是否可用
                 if email is None:
-                    print("email模块不可用，无法解析邮件内容")
-                    return None
+                    # 使用兼容性处理
+                    if EmailCompat is None:
+                        print("email模块和兼容性处理模块都不可用，无法解析邮件内容")
+                        return None
                     
-                email_message = email.message_from_bytes(raw_email)
-                
-                # 解析邮件头信息
-                subject = self.decode_mime_words(email_message.get('Subject', ''))
-                from_addr = self.decode_mime_words(email_message.get('From', ''))
-                to_addr = self.decode_mime_words(email_message.get('To', ''))
-                date = email_message.get('Date', '')
-                
-                # 解析邮件正文
-                body = self.extract_email_body(email_message)
-                
-                # 解析邮件附件
-                attachments = self.extract_email_attachments(email_message)
+                    # 使用兼容性解析
+                    parsed_email = EmailCompat.parse_email_from_bytes(raw_email)
+                    subject = EmailCompat.decode_mime_words(parsed_email.get('subject', ''))
+                    from_addr = EmailCompat.decode_mime_words(parsed_email.get('from', ''))
+                    to_addr = EmailCompat.decode_mime_words(parsed_email.get('to', ''))
+                    date = parsed_email.get('date', '')
+                    body = parsed_email.get('body', '')
+                    attachments = []  # 兼容模式下暂不支持附件
+                else:
+                    # 使用标准email模块
+                    email_message = email.message_from_bytes(raw_email)
+                    
+                    # 解析邮件头信息
+                    subject = self.decode_mime_words(email_message.get('Subject', ''))
+                    from_addr = self.decode_mime_words(email_message.get('From', ''))
+                    to_addr = self.decode_mime_words(email_message.get('To', ''))
+                    date = email_message.get('Date', '')
+                    
+                    # 解析邮件正文
+                    body = self.extract_email_body(email_message)
+                    
+                    # 解析邮件附件
+                    attachments = self.extract_email_attachments(email_message)
                 
                 email_info = {
                     'id': email_id,
