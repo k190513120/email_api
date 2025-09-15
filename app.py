@@ -178,48 +178,57 @@ def get_status():
 @app.route('/api/debug', methods=['GET'])
 def get_debug_info():
     """获取调试信息"""
-    import sys
-    import os
-    
-    debug_info = {
-        'python_version': sys.version,
-        'current_directory': os.getcwd(),
-        'python_path': sys.path[:5],  # 显示前5个路径
-        'douyin_syncer_loaded': DouyinVideoSync is not None,
-        'email_syncer_loaded': False,
-        'files_in_directory': [],
-        'import_errors': []
-    }
-    
-    # 列出当前目录的文件
     try:
-        debug_info['files_in_directory'] = [f for f in os.listdir('.') if f.endswith('.py')][:10]
+        import sys
+        import os
+        
+        debug_info = {
+            'python_version': sys.version,
+            'current_directory': os.getcwd(),
+            'python_path': sys.path[:5],  # 显示前5个路径
+            'douyin_syncer_loaded': DouyinVideoSync is not None,
+            'email_syncer_loaded': False,
+            'files_in_directory': [],
+            'import_errors': []
+        }
+        
+        # 列出当前目录的文件
+        try:
+            debug_info['files_in_directory'] = [f for f in os.listdir('.') if f.endswith('.py')][:10]
+        except Exception as e:
+            debug_info['files_in_directory'] = [f'Error listing files: {e}']
+        
+        # 测试导入
+        try:
+            import requests
+            debug_info['requests_available'] = True
+        except Exception as e:
+            debug_info['requests_available'] = False
+            debug_info['import_errors'].append(f'requests: {e}')
+        
+        try:
+            from baseopensdk import BaseClient
+            debug_info['baseopensdk_available'] = True
+        except Exception as e:
+            debug_info['baseopensdk_available'] = False
+            debug_info['import_errors'].append(f'baseopensdk: {e}')
+        
+        try:
+            from douyin_sync_action import DouyinVideoSync as TestDouyinVideoSync
+            debug_info['douyin_sync_action_available'] = True
+        except Exception as e:
+            debug_info['douyin_sync_action_available'] = False
+            debug_info['import_errors'].append(f'douyin_sync_action: {e}')
+        
+        return jsonify(debug_info)
+        
     except Exception as e:
-        debug_info['files_in_directory'] = [f'Error listing files: {e}']
-    
-    # 测试导入
-    try:
-        import requests
-        debug_info['requests_available'] = True
-    except Exception as e:
-        debug_info['requests_available'] = False
-        debug_info['import_errors'].append(f'requests: {e}')
-    
-    try:
-        from baseopensdk import BaseClient
-        debug_info['baseopensdk_available'] = True
-    except Exception as e:
-        debug_info['baseopensdk_available'] = False
-        debug_info['import_errors'].append(f'baseopensdk: {e}')
-    
-    try:
-        from douyin_sync_action import DouyinVideoSync
-        debug_info['douyin_sync_action_available'] = True
-    except Exception as e:
-        debug_info['douyin_sync_action_available'] = False
-        debug_info['import_errors'].append(f'douyin_sync_action: {e}')
-    
-    return jsonify(debug_info)
+        logger.error(f"调试端点错误: {str(e)}")
+        logger.error(f"错误堆栈: {traceback.format_exc()}")
+        return jsonify({
+            'error': f'调试端点内部错误: {str(e)}',
+            'timestamp': datetime.now().isoformat()
+        }), 500
 
 @app.errorhandler(404)
 def not_found(error):
