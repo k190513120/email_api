@@ -1,0 +1,148 @@
+name: Deploy to Koyeb
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: '强制部署'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  KOYEB_TOKEN: ${{ secrets.KOYEB_TOKEN }}
+  APP_NAME: lark-email-sync
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run basic tests
+      run: |
+        python -c "import sys; print('Python version:', sys.version)"
+        python -c "from douyin_sync_action import DouyinVideoSyncer; print('DouyinVideoSyncer imported successfully')"
+        python -c "from app import app; print('Flask app imported successfully')"
+    
+    - name: Test Flask app
+      run: |
+        export FLASK_APP=app.py
+        export FLASK_ENV=testing
+        python -c "from app import app; client = app.test_client(); response = client.get('/health'); print('Health check status:', response.status_code)"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event.inputs.force_deploy == 'true'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Koyeb CLI
+      run: |
+        curl -fsSL https://github.com/koyeb/koyeb-cli/releases/latest/download/koyeb-cli_linux_amd64.tar.gz | tar -xz
+        sudo mv koyeb /usr/local/bin/
+    
+    - name: Deploy to Koyeb
+      run: |
+        # 设置Koyeb认证
+        echo "$KOYEB_TOKEN" | koyeb auth login --token
+        
+        # 检查应用是否存在
+        if koyeb app get $APP_NAME >/dev/null 2>&1; then
+          echo "应用 $APP_NAME 已存在，执行更新部署"
+          koyeb app update $APP_NAME \
+            --git github.com/${{ github.repository }} \
+            --git-branch ${{ github.ref_name }} \
+            --git-build-command "echo 'Using Dockerfile'" \
+            --docker-dockerfile Dockerfile \
+            --ports 8000:http \
+            --routes /:8000 \
+            --instance-type nano \
+            --min-scale 1 \
+            --max-scale 1 \
+            --env FLASK_ENV=production \
+            --env PYTHONUNBUFFERED=1 \
+            --env FEISHU_APP_ID="${{ secrets.FEISHU_APP_ID }}" \
+            --env FEISHU_APP_SECRET="${{ secrets.FEISHU_APP_SECRET }}" \
+            --env DOUYIN_CLIENT_KEY="${{ secrets.DOUYIN_CLIENT_KEY }}" \
+            --env DOUYIN_CLIENT_SECRET="${{ secrets.DOUYIN_CLIENT_SECRET }}" \
+            --env DOUYIN_ACCESS_TOKEN="${{ secrets.DOUYIN_ACCESS_TOKEN }}" \
+            --env FEISHU_BITABLE_APP_TOKEN="${{ secrets.FEISHU_BITABLE_APP_TOKEN }}" \
+            --env FEISHU_BITABLE_TABLE_ID="${{ secrets.FEISHU_BITABLE_TABLE_ID }}"
+        else
+          echo "创建新应用 $APP_NAME"
+          koyeb app init $APP_NAME \
+            --git github.com/${{ github.repository }} \
+            --git-branch ${{ github.ref_name }} \
+            --git-build-command "echo 'Using Dockerfile'" \
+            --docker-dockerfile Dockerfile \
+            --ports 8000:http \
+            --routes /:8000 \
+            --instance-type nano \
+            --min-scale 1 \
+            --max-scale 1 \
+            --env FLASK_ENV=production \
+            --env PYTHONUNBUFFERED=1 \
+            --env FEISHU_APP_ID="${{ secrets.FEISHU_APP_ID }}" \
+            --env FEISHU_APP_SECRET="${{ secrets.FEISHU_APP_SECRET }}" \
+            --env DOUYIN_CLIENT_KEY="${{ secrets.DOUYIN_CLIENT_KEY }}" \
+            --env DOUYIN_CLIENT_SECRET="${{ secrets.DOUYIN_CLIENT_SECRET }}" \
+            --env DOUYIN_ACCESS_TOKEN="${{ secrets.DOUYIN_ACCESS_TOKEN }}" \
+            --env FEISHU_BITABLE_APP_TOKEN="${{ secrets.FEISHU_BITABLE_APP_TOKEN }}" \
+            --env FEISHU_BITABLE_TABLE_ID="${{ secrets.FEISHU_BITABLE_TABLE_ID }}"
+        fi
+    
+    - name: Wait for deployment
+      run: |
+        echo "等待部署完成..."
+        sleep 30
+        
+        # 获取应用状态
+        koyeb app get $APP_NAME
+        
+        # 获取应用URL
+        APP_URL=$(koyeb app get $APP_NAME --output json | jq -r '.domains[0]')
+        echo "应用部署完成，访问地址: https://$APP_URL"
+        
+        # 健康检查
+        echo "执行健康检查..."
+        curl -f "https://$APP_URL/health" || echo "健康检查失败，请手动检查应用状态"
+
+  notify:
+    needs: [test, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify deployment result
+      run: |
+        if [ "${{ needs.deploy.result }}" == "success" ]; then
+          echo "✅ 部署成功！应用已更新到最新版本。"
+        else
+          echo "❌ 部署失败！请检查日志并修复问题。"
+        fi
