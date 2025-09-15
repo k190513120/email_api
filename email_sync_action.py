@@ -475,8 +475,8 @@ class EmailSyncAction:
         except Exception as e:
             self.log_message('ERROR', "保存结果文件失败", str(e))
     
-    def run(self):
-        """执行完整的邮件同步流程"""
+    def run_sync(self):
+        """执行邮件同步并返回结果（用于HTTP API调用）"""
         try:
             self.log_message('INFO', "开始邮件同步任务")
             
@@ -499,9 +499,11 @@ class EmailSyncAction:
             self.save_results()
             
             self.log_message('INFO', "邮件同步任务完成")
+            return result
             
         except Exception as e:
-            self.log_message('ERROR', "邮件同步任务失败", traceback.format_exc())
+            error_msg = f"邮件同步任务失败: {str(e)}"
+            self.log_message('ERROR', error_msg, traceback.format_exc())
             
             # 保存错误结果
             try:
@@ -509,6 +511,21 @@ class EmailSyncAction:
             except:
                 pass
             
+            return {
+                'success': False,
+                'message': error_msg,
+                'error': str(e)
+            }
+    
+    def run(self):
+        """执行完整的邮件同步流程"""
+        try:
+            result = self.run_sync()
+            if not result['success']:
+                sys.exit(1)
+            
+        except Exception as e:
+            self.log_message('ERROR', "邮件同步任务失败", traceback.format_exc())
             sys.exit(1)
 
 def main():

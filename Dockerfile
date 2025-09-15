@@ -25,6 +25,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# 确保cgi模块可用（Python 3.9应该包含，但显式检查）
+RUN python3 -c "import cgi; print('cgi module available')" || echo "cgi module not found"
+
 # 复制项目文件
 COPY . .
 

@@ -24,6 +24,20 @@ spec:
           value: production
         - name: PYTHONUNBUFFERED
           value: "1"
+        # 飞书相关环境变量
+        - name: BITABLE_URL
+          from_secret: BITABLE_URL
+        - name: PERSONAL_BASE_TOKEN
+          from_secret: PERSONAL_BASE_TOKEN
+        # 邮件相关环境变量
+        - name: EMAIL_USERNAME
+          from_secret: EMAIL_USERNAME
+        - name: EMAIL_PASSWORD
+          from_secret: EMAIL_PASSWORD
+        - name: EMAIL_PROVIDER
+          from_secret: EMAIL_PROVIDER
+        - name: EMAIL_COUNT
+          from_secret: EMAIL_COUNT
       healthcheck:
         http:
           path: /health
