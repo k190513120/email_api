@@ -11,9 +11,27 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # 导入同步模块
 try:
+    import sys
+    print(f"Python版本: {sys.version}")
+    print(f"当前工作目录: {os.getcwd()}")
+    print(f"Python路径: {sys.path[:3]}")
+    
+    # 测试基础依赖
+    import requests
+    print("✓ requests导入成功")
+    
+    from baseopensdk import BaseClient
+    print("✓ BaseClient导入成功")
+    
+    from baseopensdk.api.base.v1 import *
+    print("✓ baseopensdk.api.base.v1导入成功")
+    
     from douyin_sync_action import DouyinVideoSync
+    print("✓ DouyinVideoSync导入成功")
 except ImportError as e:
+    import traceback
     print(f"导入抖音同步模块错误: {e}")
+    print(f"错误详情: {traceback.format_exc()}")
     DouyinVideoSync = None
 
 # 暂时禁用邮件同步模块
