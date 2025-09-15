@@ -4,13 +4,19 @@
 IMAP邮箱连接测试脚本
 支持通过用户名和授权码连接邮箱服务器，获取和解析邮件内容
 """
-
 import imaplib
-import email
-from email.header import decode_header
+import ssl
 import json
 from datetime import datetime
-import ssl
+
+# 避免使用可能依赖cgi的email模块功能
+try:
+    import email
+    from email.header import decode_header
+except ImportError:
+    # Python 3.13兼容性处理
+    email = None
+    decode_header = None
 
 class IMAPEmailClient:
     """IMAP邮箱客户端类"""
@@ -157,22 +163,31 @@ class IMAPEmailClient:
         Returns:
             str: 解码后的字符串
         """
-        decoded_fragments = decode_header(s)
-        decoded_string = ''
-        
-        for fragment, encoding in decoded_fragments:
-            if isinstance(fragment, bytes):
-                if encoding:
-                    try:
-                        decoded_string += fragment.decode(encoding)
-                    except (UnicodeDecodeError, LookupError):
+        # 检查decode_header是否可用
+        if decode_header is None:
+            # 简单返回原字符串
+            return str(s) if s else ''
+            
+        try:
+            decoded_fragments = decode_header(s)
+            decoded_string = ''
+            
+            for fragment, encoding in decoded_fragments:
+                if isinstance(fragment, bytes):
+                    if encoding:
+                        try:
+                            decoded_string += fragment.decode(encoding)
+                        except (UnicodeDecodeError, LookupError):
+                            decoded_string += fragment.decode('utf-8', errors='ignore')
+                    else:
                         decoded_string += fragment.decode('utf-8', errors='ignore')
                 else:
-                    decoded_string += fragment.decode('utf-8', errors='ignore')
-            else:
-                decoded_string += fragment
-        
-        return decoded_string
+                    decoded_string += fragment
+            
+            return decoded_string
+        except Exception:
+            # 如果解码失败，返回原字符串
+            return str(s) if s else ''
     
     def get_email_content(self, email_id):
         """
@@ -192,6 +207,12 @@ class IMAPEmailClient:
             result, data = self.imap.fetch(email_id, '(RFC822)')
             if result == 'OK':
                 raw_email = data[0][1]
+                
+                # 检查email模块是否可用
+                if email is None:
+                    print("email模块不可用，无法解析邮件内容")
+                    return None
+                    
                 email_message = email.message_from_bytes(raw_email)
                 
                 # 解析邮件头信息

@@ -18,9 +18,12 @@ from baseopensdk.api.base.v1 import *
 from baseopensdk.api.drive.v1 import *
 
 class EmailSyncAction:
-    def __init__(self):
+    def __init__(self, config=None):
         """初始化邮件同步操作类"""
-        self.config = self.load_config_from_env()
+        if config:
+            self.config = self.validate_config(config)
+        else:
+            self.config = self.load_config_from_env()
         self.sync_results = []
         self.sync_logs = []
         self.feishu_client = None
@@ -51,6 +54,30 @@ class EmailSyncAction:
         missing_fields = [field for field in required_fields if not config[field]]
         if missing_fields:
             raise ValueError(f"缺少必需的环境变量: {', '.join(missing_fields)}")
+            
+        return config
+    
+    def validate_config(self, config):
+        """验证传入的配置参数"""
+        # 从BITABLE_URL中解析app_token
+        if config.get('bitable_url'):
+            try:
+                bitable_info = self.parse_bitable_url(config['bitable_url'])
+                config['app_token'] = bitable_info['app_token']
+            except Exception as e:
+                raise ValueError(f"解析BITABLE_URL失败: {str(e)}")
+        
+        # 设置默认值
+        config.setdefault('email_provider', 'feishu')
+        config.setdefault('email_count', 10)
+        
+        # 验证必需的配置
+        required_fields = ['bitable_url', 'personal_base_token', 
+                          'email_username', 'email_password']
+        
+        missing_fields = [field for field in required_fields if not config.get(field)]
+        if missing_fields:
+            raise ValueError(f"缺少必需的配置参数: {', '.join(missing_fields)}")
             
         return config
     
@@ -245,12 +272,29 @@ class EmailSyncAction:
                 date_timestamp = None
                 if email.get('date'):
                     try:
-                        from email.utils import parsedate_to_datetime
-                        parsed_date = parsedate_to_datetime(email.get('date'))
+                        # 使用更兼容的日期解析方式
+                        import time
+                        from datetime import datetime
+                        
+                        date_str = email.get('date')
+                        # 尝试多种日期格式解析
+                        try:
+                            # 标准RFC2822格式
+                            parsed_date = datetime.strptime(date_str.split(' (')[0], '%a, %d %b %Y %H:%M:%S %z')
+                        except:
+                            try:
+                                # 简化格式
+                                parsed_date = datetime.strptime(date_str[:25], '%a, %d %b %Y %H:%M:%S')
+                            except:
+                                # 使用当前时间作为fallback
+                                parsed_date = datetime.now()
+                        
                         # 转换为毫秒时间戳
                         date_timestamp = int(parsed_date.timestamp() * 1000)
                     except Exception as e:
                         self.log_message('WARNING', f"日期解析失败: {email.get('date')}, 错误: {str(e)}")
+                        # 使用当前时间戳作为fallback
+                        date_timestamp = int(datetime.now().timestamp() * 1000)
                 
                 # 分别映射到对应字段
                 record = {

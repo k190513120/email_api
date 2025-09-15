@@ -19,25 +19,12 @@ spec:
         min: 1
         max: 1
       env:
-        # 环境变量将通过Koyeb控制台或CLI设置
+        # 基础环境变量
         - name: FLASK_ENV
           value: production
         - name: PYTHONUNBUFFERED
           value: "1"
-        # 飞书相关环境变量
-        - name: BITABLE_URL
-          from_secret: BITABLE_URL
-        - name: PERSONAL_BASE_TOKEN
-          from_secret: PERSONAL_BASE_TOKEN
-        # 邮件相关环境变量
-        - name: EMAIL_USERNAME
-          from_secret: EMAIL_USERNAME
-        - name: EMAIL_PASSWORD
-          from_secret: EMAIL_PASSWORD
-        - name: EMAIL_PROVIDER
-          from_secret: EMAIL_PROVIDER
-        - name: EMAIL_COUNT
-          from_secret: EMAIL_COUNT
+        # 注意：所有业务配置现在通过HTTP请求参数传递，无需环境变量
       healthcheck:
         http:
           path: /health

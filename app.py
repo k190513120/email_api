@@ -68,15 +68,32 @@ def sync_douyin_videos():
         
         # 获取请求参数
         data = request.get_json() or {}
-        force_sync = data.get('force', False)
         
-        logger.info(f"开始抖音视频同步，强制同步: {force_sync}")
+        # 验证必需参数
+        required_params = ['douyin_url', 'bitable_url', 'personal_base_token']
+        missing_params = [param for param in required_params if not data.get(param)]
+        
+        if missing_params:
+            return jsonify({
+                'success': False,
+                'error': f'缺少必需参数: {", ".join(missing_params)}',
+                'timestamp': datetime.now().isoformat(),
+                'message': '抖音视频同步失败'
+            }), 400
+        
+        sync_count = data.get('sync_count', 15)
+        
+        logger.info(f"开始抖音视频同步，URL: {data['douyin_url']}, 数量: {sync_count}")
         
         # 创建同步器实例
-        syncer = DouyinVideoSync()
+        syncer = DouyinVideoSync(data['personal_base_token'])
         
         # 执行同步
-        result = syncer.sync_videos()
+        result = syncer.sync_videos_to_table(
+            douyin_url=data['douyin_url'],
+            bitable_url=data['bitable_url'],
+            count=sync_count
+        )
         
         logger.info(f"同步完成: {result}")
         
@@ -115,10 +132,32 @@ def sync_emails():
         # 获取请求参数
         data = request.get_json() or {}
         
-        logger.info("开始邮件同步")
+        # 验证必需参数
+        required_params = ['bitable_url', 'personal_base_token', 'email_username', 'email_password']
+        missing_params = [param for param in required_params if not data.get(param)]
+        
+        if missing_params:
+            return jsonify({
+                'success': False,
+                'error': f'缺少必需参数: {", ".join(missing_params)}',
+                'timestamp': datetime.now().isoformat(),
+                'message': '邮件同步失败'
+            }), 400
+        
+        # 准备配置参数
+        config = {
+            'bitable_url': data['bitable_url'],
+            'personal_base_token': data['personal_base_token'],
+            'email_username': data['email_username'],
+            'email_password': data['email_password'],
+            'email_provider': data.get('email_provider', 'feishu'),
+            'email_count': data.get('email_count', 10)
+        }
+        
+        logger.info(f"开始邮件同步，邮箱: {data['email_username']}, 数量: {data.get('email_count', 10)}")
         
         # 创建同步器实例
-        syncer = EmailSyncAction()
+        syncer = EmailSyncAction(config)
         
         # 执行同步
         result = syncer.run_sync()
@@ -150,37 +189,19 @@ def sync_emails():
 def get_status():
     """获取服务状态"""
     try:
-        # 检查环境变量
-        env_status = {
-            'FEISHU_APP_ID': bool(os.getenv('FEISHU_APP_ID')),
-            'FEISHU_APP_SECRET': bool(os.getenv('FEISHU_APP_SECRET')),
-            'DOUYIN_CLIENT_KEY': bool(os.getenv('DOUYIN_CLIENT_KEY')),
-            'DOUYIN_CLIENT_SECRET': bool(os.getenv('DOUYIN_CLIENT_SECRET')),
-            'DOUYIN_ACCESS_TOKEN': bool(os.getenv('DOUYIN_ACCESS_TOKEN')),
-            'FEISHU_BITABLE_APP_TOKEN': bool(os.getenv('FEISHU_BITABLE_APP_TOKEN')),
-            'FEISHU_BITABLE_TABLE_ID': bool(os.getenv('FEISHU_BITABLE_TABLE_ID')),
-            'BITABLE_URL': bool(os.getenv('BITABLE_URL')),
-            'PERSONAL_BASE_TOKEN': bool(os.getenv('PERSONAL_BASE_TOKEN')),
-            'EMAIL_USERNAME': bool(os.getenv('EMAIL_USERNAME')),
-            'EMAIL_PASSWORD': bool(os.getenv('EMAIL_PASSWORD')),
-            'EMAIL_PROVIDER': bool(os.getenv('EMAIL_PROVIDER')),
-            'EMAIL_COUNT': bool(os.getenv('EMAIL_COUNT'))
-        }
-        
         # 检查模块状态
         module_status = {
             'douyin_syncer_loaded': DouyinVideoSync is not None,
             'email_syncer_loaded': EmailSyncAction is not None
         }
         
-        all_env_ready = all(env_status.values())
         all_modules_ready = all(module_status.values())
         
         return jsonify({
-            'status': 'ready' if (all_env_ready and all_modules_ready) else 'not_ready',
-            'environment': env_status,
+            'status': 'ready' if all_modules_ready else 'not_ready',
             'modules': module_status,
-            'timestamp': datetime.now().isoformat()
+            'timestamp': datetime.now().isoformat(),
+            'message': '所有配置通过HTTP请求参数传递，无需环境变量配置'
         }), 200
         
     except Exception as e:

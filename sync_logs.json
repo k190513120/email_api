@@ -1,107 +1,327 @@
 [
   {
-    "timestamp": "2025-09-06T15:49:57.780804",
+    "timestamp": "2025-09-15T10:38:32.089183",
     "level": "INFO",
     "message": "开始邮件同步任务"
   },
   {
-    "timestamp": "2025-09-06T15:49:57.780831",
+    "timestamp": "2025-09-15T10:38:32.089231",
     "level": "INFO",
     "message": "开始连接 feishu 邮箱服务器"
   },
   {
-    "timestamp": "2025-09-06T15:49:58.284741",
+    "timestamp": "2025-09-15T10:38:32.627597",
     "level": "INFO",
     "message": "邮箱连接成功"
   },
   {
-    "timestamp": "2025-09-06T15:49:58.662455",
+    "timestamp": "2025-09-15T10:38:33.194136",
     "level": "INFO",
-    "message": "找到 3 封邮件"
+    "message": "找到 50 封邮件"
   },
   {
-    "timestamp": "2025-09-06T15:49:58.989029",
+    "timestamp": "2025-09-15T10:38:33.454465",
     "level": "INFO",
-    "message": "成功获取邮件 1/3: 欢迎使用飞书邮箱！"
+    "message": "成功获取邮件 1/50: 【重要】请确认是否拥有美国税收居民身份 | [Important] Please Confirm I"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.217065",
+    "timestamp": "2025-09-15T10:38:33.848143",
     "level": "INFO",
-    "message": "成功获取邮件 2/3: 11"
+    "message": "成功获取邮件 2/50: [External] Ghislaine Maxwell in Her Own Words"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.509263",
+    "timestamp": "2025-09-15T10:38:34.090377",
     "level": "INFO",
-    "message": "成功获取邮件 3/3: Fw: 个人信用报告查询"
+    "message": "成功获取邮件 3/50: [External] 您有4元信用卡还款返现礼待领取！"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.620439",
+    "timestamp": "2025-09-15T10:38:34.392125",
     "level": "INFO",
-    "message": "成功获取 3 封邮件"
+    "message": "成功获取邮件 4/50: [External] What are Forward Deployed Engineers, an"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.621912",
+    "timestamp": "2025-09-15T10:38:34.694782",
+    "level": "INFO",
+    "message": "成功获取邮件 5/50: [External]我的夏日奇遇：那些让你感觉碎掉的时刻，不是真的"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:34.968962",
+    "level": "INFO",
+    "message": "成功获取邮件 6/50: [External] BREAKING: BILL CLINTON NAMED AS \"PRIME "
+  },
+  {
+    "timestamp": "2025-09-15T10:38:35.206117",
+    "level": "INFO",
+    "message": "成功获取邮件 7/50: [External]The Long-Buried Secret of Bill Clinton’s"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:35.465493",
+    "level": "INFO",
+    "message": "成功获取邮件 8/50: [External] Forgot your password?"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:35.706387",
+    "level": "INFO",
+    "message": "成功获取邮件 9/50: [External] We’ve updated our Terms of Service"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:35.965886",
+    "level": "INFO",
+    "message": "成功获取邮件 10/50: [External] You can now view the \"卡片\" file"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:36.234686",
+    "level": "INFO",
+    "message": "成功获取邮件 11/50: [External] Getting started with Figma"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:36.456229",
+    "level": "INFO",
+    "message": "成功获取邮件 12/50: [External] 🪄 Lan，解锁积分魔法。"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:36.758366",
+    "level": "INFO",
+    "message": "成功获取邮件 13/50: [External] The Pulse #142: Crazy-hours culture at "
+  },
+  {
+    "timestamp": "2025-09-15T10:38:37.011235",
+    "level": "INFO",
+    "message": "成功获取邮件 14/50: [External] 筑格调生活"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:37.403974",
+    "level": "INFO",
+    "message": "成功获取邮件 15/50: 【重要】请确认是否拥有美国税收居民身份 | [Important] Please Confirm I"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:37.672322",
+    "level": "INFO",
+    "message": "成功获取邮件 16/50: [External] 【招商银行】闪电贷助力消费，轻松解锁品质生活"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:37.959414",
+    "level": "INFO",
+    "message": "成功获取邮件 17/50: [External]Lan，获享更多旅行积分。⚡️"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:38.195974",
+    "level": "INFO",
+    "message": "成功获取邮件 18/50: [External] Now anyone can pay for a Substack subsc"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:38.504653",
+    "level": "INFO",
+    "message": "成功获取邮件 19/50: [External]The Pragmatic Engineer 2025 Survey: What"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:38.736993",
+    "level": "INFO",
+    "message": "成功获取邮件 20/50: [External]56 向世界和你随机发问：这些问题都是谁有答案呀？！"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:38.975261",
+    "level": "INFO",
+    "message": "成功获取邮件 21/50: [External] H100 vs GB200 NVL72 Training Benchmarks"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:39.222267",
+    "level": "INFO",
+    "message": "成功获取邮件 22/50: The Pulse #143: Creative ways to fund open source "
+  },
+  {
+    "timestamp": "2025-09-15T10:38:39.564255",
+    "level": "INFO",
+    "message": "成功获取邮件 23/50: Lan，积分让您畅游四方。🏝"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:39.886992",
+    "level": "INFO",
+    "message": "成功获取邮件 24/50: 【重要】请确认是否拥有美国税收居民身份 | [Important] Please Confirm I"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:40.176480",
+    "level": "INFO",
+    "message": "成功获取邮件 25/50: BREAKING: Maxwell Transcripts and Audio Released i"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:40.464933",
+    "level": "INFO",
+    "message": "成功获取邮件 26/50: 积分加速，畅享新旅程 ⏩"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:40.807186",
+    "level": "INFO",
+    "message": "成功获取邮件 27/50: [External] How experienced engineers get unstuck i"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:41.087740",
+    "level": "INFO",
+    "message": "成功获取邮件 28/50: [External]您的 八月 希尔顿荣誉客会对账单   "
+  },
+  {
+    "timestamp": "2025-09-15T10:38:41.319888",
+    "level": "INFO",
+    "message": "成功获取邮件 29/50: [External]莫问世界1：从土耳其到荷兰,她如郁金香般的游荡路线和动荡艰难"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:41.579978",
+    "level": "INFO",
+    "message": "成功获取邮件 30/50: [External]You’re invited: Building aligned design "
+  },
+  {
+    "timestamp": "2025-09-15T10:38:41.837935",
+    "level": "INFO",
+    "message": "成功获取邮件 31/50: [External] The grift artist"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:42.094496",
+    "level": "INFO",
+    "message": "成功获取邮件 32/50: [External] 招牌下午茶"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:42.343206",
+    "level": "INFO",
+    "message": "成功获取邮件 33/50: [External] 查看赚享积分的实用秘籍"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:42.606171",
+    "level": "INFO",
+    "message": "成功获取邮件 34/50: 【重要】请确认是否拥有美国税收居民身份 | [Important] Please Confirm I"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:42.839708",
+    "level": "INFO",
+    "message": "成功获取邮件 35/50: [External] Ghislaine Spilled More Than You Think"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:43.165556",
+    "level": "INFO",
+    "message": "成功获取邮件 36/50: [External] 【用户积分管理系统】邮箱验证码"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:43.406392",
+    "level": "INFO",
+    "message": "成功获取邮件 37/50: [External] State of the software engineering job m"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:43.646615",
+    "level": "INFO",
+    "message": "成功获取邮件 38/50: [External]在秋天尝试新的可能：来英国寺庙咖啡馆打工换宿"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:43.897318",
+    "level": "INFO",
+    "message": "成功获取邮件 39/50: [External]记得，您有一份神秘优惠正在等待领取。"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:44.180399",
+    "level": "INFO",
+    "message": "成功获取邮件 40/50: [External]【招商银行】您的闪电贷年利率3.05%利率优惠券已到账！"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:44.404198",
+    "level": "INFO",
+    "message": "成功获取邮件 41/50: 企业纪律与职业道德委员会通报 ByteDance Ethics Bulletin"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:44.702121",
+    "level": "INFO",
+    "message": "成功获取邮件 42/50: [External] Fellou - The Agentic Browser login veri"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:45.027826",
+    "level": "INFO",
+    "message": "成功获取邮件 43/50: 【重要】请确认是否拥有美国税收居民身份 | [Important] Please Confirm I"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:45.278121",
+    "level": "INFO",
+    "message": "成功获取邮件 44/50: [External]Fwd: 您在 Agoda 的预订确认信 - 预订编码：1933105268"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:45.610508",
+    "level": "INFO",
+    "message": "成功获取邮件 45/50: [External] Inside Google's Engineering Culture: Pa"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:45.893532",
+    "level": "INFO",
+    "message": "成功获取邮件 46/50: [External]作为哈利波特和成为哈利波特"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:46.152681",
+    "level": "INFO",
+    "message": "成功获取邮件 47/50: [External] Another Giant Leap: The Rubin CPX Speci"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:46.392440",
+    "level": "INFO",
+    "message": "成功获取邮件 48/50: 【重要】请确认是否拥有美国税收居民身份 | [Important] Please Confirm I"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:46.715116",
+    "level": "INFO",
+    "message": "成功获取邮件 49/50: [External] A new growth chart and tools to help yo"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:46.961577",
+    "level": "INFO",
+    "message": "成功获取邮件 50/50: [External] In dialogue: A rising tide of political"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:47.065529",
+    "level": "INFO",
+    "message": "成功获取 50 封邮件"
+  },
+  {
+    "timestamp": "2025-09-15T10:38:47.068085",
     "level": "INFO",
     "message": "开始同步邮件到飞书多维表格"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.621938",
+    "timestamp": "2025-09-15T10:38:47.068217",
     "level": "INFO",
     "message": "初始化飞书BaseOpenSDK客户端"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.622028",
+    "timestamp": "2025-09-15T10:38:47.068921",
     "level": "INFO",
     "message": "飞书客户端初始化成功"
   },
   {
-    "timestamp": "2025-09-06T15:49:59.622147",
+    "timestamp": "2025-09-15T10:38:47.069792",
     "level": "INFO",
-    "message": "开始上传附件: 个人信用报告.zip (116633 bytes)"
+    "message": "开始上传附件: Confirmation_for_Booking_ID_#_1933105268.pdf (60084 bytes)"
   },
   {
-    "timestamp": "2025-09-06T15:50:00.578337",
+    "timestamp": "2025-09-15T10:38:47.971685",
     "level": "INFO",
-    "message": "附件 个人信用报告.zip 上传成功，file_token: XylXbA0VCo6OxUx17Q3cF5OEn4g"
+    "message": "附件 Confirmation_for_Booking_ID_#_1933105268.pdf 上传成功，file_token: K5pkbAQWloaj7oxYU9ccKD9TnLh"
   },
   {
-    "timestamp": "2025-09-06T15:50:00.578435",
+    "timestamp": "2025-09-15T10:38:47.972052",
     "level": "INFO",
-    "message": "准备同步 3 条记录"
+    "message": "准备同步 50 条记录"
   },
   {
-    "timestamp": "2025-09-06T15:50:00.578458",
+    "timestamp": "2025-09-15T10:38:47.972147",
     "level": "INFO",
     "message": "查询现有邮件日期"
   },
   {
-    "timestamp": "2025-09-06T15:50:01.217346",
+    "timestamp": "2025-09-15T10:38:48.559736",
     "level": "INFO",
-    "message": "找到 3 个现有邮件日期"
+    "message": "找到 0 个现有邮件日期"
   },
   {
-    "timestamp": "2025-09-06T15:50:01.217423",
+    "timestamp": "2025-09-15T10:38:48.559861",
     "level": "INFO",
-    "message": "跳过重复邮件: 欢迎使用飞书邮箱！ (日期: 1734655446000)"
+    "message": "跳过重复邮件 0 条，准备同步新邮件 50 条"
   },
   {
-    "timestamp": "2025-09-06T15:50:01.217445",
+    "timestamp": "2025-09-15T10:38:50.170614",
     "level": "INFO",
-    "message": "跳过重复邮件: 11 (日期: 1734656615000)"
-  },
-  {
-    "timestamp": "2025-09-06T15:50:01.217460",
-    "level": "INFO",
-    "message": "跳过重复邮件: Fw: 个人信用报告查询 (日期: 1757140105000)"
-  },
-  {
-    "timestamp": "2025-09-06T15:50:01.217473",
-    "level": "INFO",
-    "message": "跳过重复邮件 3 条，准备同步新邮件 0 条"
-  },
-  {
-    "timestamp": "2025-09-06T15:50:01.217485",
-    "level": "INFO",
-    "message": "没有新邮件需要同步"
+    "message": "同步成功: 成功同步 50 条记录"
   }
 ]

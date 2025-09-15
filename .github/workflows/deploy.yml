@@ -86,14 +86,7 @@ jobs:
             --min-scale 1 \
             --max-scale 1 \
             --env FLASK_ENV=production \
-            --env PYTHONUNBUFFERED=1 \
-            --env FEISHU_APP_ID="${{ secrets.FEISHU_APP_ID }}" \
-            --env FEISHU_APP_SECRET="${{ secrets.FEISHU_APP_SECRET }}" \
-            --env DOUYIN_CLIENT_KEY="${{ secrets.DOUYIN_CLIENT_KEY }}" \
-            --env DOUYIN_CLIENT_SECRET="${{ secrets.DOUYIN_CLIENT_SECRET }}" \
-            --env DOUYIN_ACCESS_TOKEN="${{ secrets.DOUYIN_ACCESS_TOKEN }}" \
-            --env FEISHU_BITABLE_APP_TOKEN="${{ secrets.FEISHU_BITABLE_APP_TOKEN }}" \
-            --env FEISHU_BITABLE_TABLE_ID="${{ secrets.FEISHU_BITABLE_TABLE_ID }}"
+            --env PYTHONUNBUFFERED=1
         else
           echo "创建新应用 $APP_NAME"
           koyeb app init $APP_NAME \
@@ -107,14 +100,7 @@ jobs:
             --min-scale 1 \
             --max-scale 1 \
             --env FLASK_ENV=production \
-            --env PYTHONUNBUFFERED=1 \
-            --env FEISHU_APP_ID="${{ secrets.FEISHU_APP_ID }}" \
-            --env FEISHU_APP_SECRET="${{ secrets.FEISHU_APP_SECRET }}" \
-            --env DOUYIN_CLIENT_KEY="${{ secrets.DOUYIN_CLIENT_KEY }}" \
-            --env DOUYIN_CLIENT_SECRET="${{ secrets.DOUYIN_CLIENT_SECRET }}" \
-            --env DOUYIN_ACCESS_TOKEN="${{ secrets.DOUYIN_ACCESS_TOKEN }}" \
-            --env FEISHU_BITABLE_APP_TOKEN="${{ secrets.FEISHU_BITABLE_APP_TOKEN }}" \
-            --env FEISHU_BITABLE_TABLE_ID="${{ secrets.FEISHU_BITABLE_TABLE_ID }}"
+            --env PYTHONUNBUFFERED=1
         fi
     
     - name: Wait for deployment
