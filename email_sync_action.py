@@ -36,7 +36,7 @@ class EmailSyncAction:
             'email_username': os.getenv('EMAIL_USERNAME'),
             'email_password': os.getenv('EMAIL_PASSWORD'),
             'email_provider': os.getenv('EMAIL_PROVIDER', 'feishu'),
-            'email_count': int(os.getenv('EMAIL_COUNT', '10'))
+            'email_count': int(os.getenv('EMAIL_COUNT', '50'))  # 修改默认值为50
         }
         
         # 从BITABLE_URL中解析app_token
@@ -69,7 +69,7 @@ class EmailSyncAction:
         
         # 设置默认值
         config.setdefault('email_provider', 'feishu')
-        config.setdefault('email_count', 10)
+        config.setdefault('email_count', 50)  # 修改默认值为50
         
         # 验证必需的配置
         required_fields = ['bitable_url', 'personal_base_token', 

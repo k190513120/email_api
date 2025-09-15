@@ -173,8 +173,10 @@ def sync_emails():
             'email_username': data['email_username'],
             'email_password': data['email_password'],
             'email_provider': data.get('email_provider', 'feishu'),
-            'email_count': data.get('email_count', 10)
+            'email_count': data.get('email_count', 50)  # 修改默认值为50
         }
+        
+        logger.info(f"邮件同步配置 - 用户: {config['email_username']}, 数量: {config['email_count']}, 提供商: {config['email_provider']}")
         
         syncer = EmailSyncAction(config)
         

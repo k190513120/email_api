@@ -243,6 +243,9 @@ class DouyinVideoSync:
             bool: 是否成功
         """
         try:
+            print(f"准备添加记录到表格 {table_id}")
+            print(f"记录数据: {json.dumps(record_data, ensure_ascii=False, indent=2)}")
+            
             # 构造请求对象
             request = CreateAppTableRecordRequest.builder() \
                 .table_id(table_id) \
@@ -252,14 +255,23 @@ class DouyinVideoSync:
             # 发起请求
             response = self.feishu_client.base.v1.app_table_record.create(request)
             
+            print(f"飞书API响应码: {response.code}")
+            print(f"飞书API响应消息: {response.msg}")
+            
             if response.code == 0:
+                print("记录添加成功")
                 return True
             else:
-                print(f"添加记录失败: {response.msg}")
+                print(f"添加记录失败: 错误码={response.code}, 错误信息={response.msg}")
+                # 打印更详细的错误信息
+                if hasattr(response, 'error'):
+                    print(f"详细错误: {response.error}")
                 return False
                 
         except Exception as e:
             print(f"添加记录到表格失败: {e}")
+            import traceback
+            print(f"错误堆栈: {traceback.format_exc()}")
             return False
     
     def sync_videos_to_table(self, douyin_url: str, bitable_url: str, count: int = 20) -> Dict:
