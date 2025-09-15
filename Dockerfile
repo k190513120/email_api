@@ -1,5 +1,5 @@
-# 使用官方Python运行时作为父镜像
-FROM python:3.9
+# 使用官方Python运行时作为父镜像 - 使用3.11版本确保稳定性和兼容性
+FROM python:3.11-slim
 
 # 设置工作目录
 WORKDIR /app
@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
     g++ \
     curl \
     python3-dev \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制requirements文件
