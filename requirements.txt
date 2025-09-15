@@ -13,3 +13,6 @@ idna==3.4
 certifi==2023.7.22
 # 时间处理
 pytz==2023.3
+# 邮件处理
+email-validator==2.1.0
+imaplib2==3.6

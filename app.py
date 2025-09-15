@@ -34,13 +34,13 @@ except ImportError as e:
     print(f"错误详情: {traceback.format_exc()}")
     DouyinVideoSync = None
 
-# 暂时禁用邮件同步模块
-# try:
-#     from email_sync_action import EmailSyncAction
-# except ImportError as e:
-#     print(f"导入邮件同步模块错误: {e}")
-#     EmailSyncAction = None
-EmailSyncAction = None  # 暂时禁用邮件同步功能
+# 导入邮件同步模块
+try:
+    from email_sync_action import EmailSyncAction
+    print("✓ EmailSyncAction导入成功")
+except ImportError as e:
+    print(f"导入邮件同步模块错误: {e}")
+    EmailSyncAction = None
 
 app = Flask(__name__)
 CORS(app)  # 启用跨域支持
@@ -68,10 +68,11 @@ def index():
         'message': '飞书邮件同步服务',
         'version': '1.0.0',
         'endpoints': {
-            'health': '/health',
-            'sync_douyin': '/api/sync/douyin',
-            'status': '/api/status'
-        }
+                'health': '/health',
+                'sync_douyin': '/api/sync/douyin',
+                'sync_email': '/api/sync/email',
+                'status': '/api/status'
+            }
     })
 
 @app.route('/api/sync/douyin', methods=['POST'])
@@ -137,28 +138,84 @@ def sync_douyin_videos():
             'message': '抖音视频同步失败'
         }), 500
 
-# 暂时禁用邮件同步端点
-# @app.route('/api/sync/email', methods=['POST'])
-# def sync_emails():
-#     """触发邮件同步"""
-#     return jsonify({
-#         'success': False,
-#         'error': '邮件同步功能暂时禁用',
-#         'timestamp': datetime.now().isoformat()
-#     }), 503
+@app.route('/api/sync/email', methods=['POST'])
+def sync_emails():
+    """触发邮件同步"""
+    try:
+        if EmailSyncAction is None:
+            return jsonify({
+                'success': False,
+                'error': '邮件同步模块未正确加载',
+                'timestamp': datetime.now().isoformat()
+            }), 500
+        
+        # 获取请求参数
+        data = request.get_json() or {}
+        
+        # 验证必需参数
+        required_params = ['personal_base_token', 'bitable_url', 'email_username', 'email_password']
+        missing_params = [param for param in required_params if not data.get(param)]
+        
+        if missing_params:
+            return jsonify({
+                'success': False,
+                'error': f'缺少必需参数: {", ".join(missing_params)}',
+                'timestamp': datetime.now().isoformat(),
+                'message': '邮件同步失败'
+            }), 400
+        
+        logger.info(f"开始邮件同步，目标表格: {data['bitable_url']}")
+        
+        # 创建同步器实例，传入完整配置
+        config = {
+            'personal_base_token': data['personal_base_token'],
+            'bitable_url': data['bitable_url'],
+            'email_username': data['email_username'],
+            'email_password': data['email_password'],
+            'email_provider': data.get('email_provider', 'feishu'),
+            'email_count': data.get('email_count', 10)
+        }
+        
+        syncer = EmailSyncAction(config)
+        
+        # 执行同步
+        result = syncer.run_sync()
+        
+        logger.info(f"邮件同步完成: {result}")
+        
+        return jsonify({
+            'success': True,
+            'data': result,
+            'timestamp': datetime.now().isoformat(),
+            'message': '邮件同步完成'
+        }), 200
+        
+    except Exception as e:
+        error_msg = str(e)
+        error_trace = traceback.format_exc()
+        
+        logger.error(f"邮件同步失败: {error_msg}")
+        logger.error(f"错误堆栈: {error_trace}")
+        
+        return jsonify({
+            'success': False,
+            'error': error_msg,
+            'timestamp': datetime.now().isoformat(),
+            'message': '邮件同步失败'
+        }), 500
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
     """获取服务状态"""
     try:
-        # 检查模块状态（只检查抖音模块）
+        # 检查模块状态
         module_status = {
             'douyin_syncer_loaded': DouyinVideoSync is not None,
-            'email_syncer_loaded': False  # 暂时禁用
+            'email_syncer_loaded': EmailSyncAction is not None
         }
         
-        # 只要抖音模块加载成功就认为服务可用
-        all_modules_ready = DouyinVideoSync is not None
+        # 两个模块都加载成功才认为服务完全可用
+        all_modules_ready = DouyinVideoSync is not None and EmailSyncAction is not None
         
         return jsonify({
             'status': 'ready' if all_modules_ready else 'not_ready',
@@ -186,7 +243,7 @@ def get_debug_info():
             'python_version': sys.version,
             'current_directory': os.getcwd(),
             'douyin_syncer_loaded': DouyinVideoSync is not None,
-            'email_syncer_loaded': False,
+            'email_syncer_loaded': EmailSyncAction is not None,
             'timestamp': datetime.now().isoformat()
         })
         
