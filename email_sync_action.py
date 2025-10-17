@@ -3,6 +3,7 @@
 """GitHub Actions 邮件同步到飞书多维表格脚本
 支持从环境变量读取配置，实现邮件获取和数据同步
 使用BaseOpenSDK进行飞书多维表格操作
+支持多种邮箱类型：飞书邮箱、Gmail、QQ邮箱、网易邮箱等
 """
 
 import os
@@ -11,7 +12,7 @@ import json
 import time
 import traceback
 from datetime import datetime
-from imap_email_test import IMAPEmailClient, EMAIL_SERVERS
+from email_providers import EmailProviderFactory
 
 from baseopensdk import BaseClient
 from baseopensdk.api.base.v1 import *
@@ -165,86 +166,36 @@ class EmailSyncAction:
         try:
             self.log_message('INFO', f"开始连接 {self.config['email_provider']} 邮箱服务器")
             
-            # 获取邮箱服务器配置
-            if self.config['email_provider'] == 'feishu':
-                # 飞书邮箱配置
-                server_config = {
-                    'server': 'imap.feishu.cn',
-                    'port': 993,
-                    'ssl': True
-                }
-            elif self.config['email_provider'] in EMAIL_SERVERS:
-                server_config = EMAIL_SERVERS[self.config['email_provider']]
-            else:
-                raise ValueError(f"不支持的邮箱服务商: {self.config['email_provider']}")
-            
-            # 创建IMAP客户端
-            client = IMAPEmailClient(
-                server_config['server'],
-                server_config['port'],
-                server_config['ssl']
+            # 创建邮箱提供商实例
+            email_provider = EmailProviderFactory.create_provider(
+                self.config['email_provider'],
+                self.config['email_username'],
+                self.config['email_password']
             )
             
-            # 连接邮箱
-            if not client.connect(self.config['email_username'], self.config['email_password']):
-                raise Exception("邮箱连接失败")
+            # 获取邮件
+            emails = email_provider.get_emails(count=self.config['email_count'])
             
-            self.log_message('INFO', "邮箱连接成功")
-            
-            # 选择收件箱
-            if not client.select_folder('INBOX'):
-                raise Exception("选择收件箱失败")
-            
-            # 搜索邮件
-            email_ids = client.search_emails('ALL', limit=self.config['email_count'])
-            
-            if not email_ids:
-                self.log_message('WARNING', "未找到邮件")
+            if not emails:
+                self.log_message('WARNING', "未获取到任何邮件")
                 return []
             
-            self.log_message('INFO', f"找到 {len(email_ids)} 封邮件")
+            # 打印邮件数据结构供用户查看
+            for i, email_info in enumerate(emails):
+                print(f"\n=== 邮件 {i+1} 的完整数据结构 ===")
+                print(f"邮件ID: {email_info.get('id', 'N/A')}")
+                print(f"主题: {email_info.get('subject', 'N/A')}")
+                print(f"发件人: {email_info.get('sender', 'N/A')}")
+                print(f"收件人: {email_info.get('recipient', 'N/A')}")
+                print(f"日期: {email_info.get('date', 'N/A')}")
+                print(f"正文长度: {len(email_info.get('body', '')) if email_info.get('body') else 0} 字符")
+                print(f"正文内容(前200字符): {(email_info.get('body', '') or '')[:200]}...")
+                print(f"是否有附件: {email_info.get('has_attachments', False)}")
+                print("=" * 50)
             
-            # 获取邮件详情
-            emails = []
-            for i, email_id in enumerate(email_ids):
-                try:
-                    email_info = client.get_email_content(email_id)
-                    if email_info:
-                        emails.append(email_info)
-                        self.log_message('INFO', f"成功获取邮件 {i+1}/{len(email_ids)}: {email_info['subject'][:50]}")
-                        
-                        # 打印真实的邮件数据结构供用户查看
-                        print(f"\n=== 邮件 {i+1} 的完整数据结构 ===")
-                        print(f"邮件ID: {email_info.get('id', 'N/A')}")
-                        print(f"主题: {email_info.get('subject', 'N/A')}")
-                        print(f"发件人: {email_info.get('from', 'N/A')}")
-                        print(f"收件人: {email_info.get('to', 'N/A')}")
-                        print(f"日期: {email_info.get('date', 'N/A')}")
-                        print(f"正文长度: {len(email_info.get('body', '')) if email_info.get('body') else 0} 字符")
-                        print(f"正文内容(前200字符): {(email_info.get('body', '') or '')[:200]}...")
-                        
-                        attachments = email_info.get('attachments', [])
-                        print(f"附件数量: {len(attachments)}")
-                        for j, att in enumerate(attachments):
-                            if isinstance(att, dict):
-                                print(f"  附件 {j+1}:")
-                                print(f"    文件名: {att.get('filename', 'N/A')}")
-                                print(f"    大小: {att.get('size', 'N/A')} bytes")
-                                print(f"    内容类型: {type(att.get('content', 'N/A'))}")
-                                print(f"    内容长度: {len(att.get('content', b'')) if att.get('content') else 0} bytes")
-                            else:
-                                print(f"  附件 {j+1}: {type(att)} - {str(att)[:100]}")
-                        print("=" * 50)
-                        
-                    else:
-                        self.log_message('WARNING', f"获取邮件 {email_id} 失败")
-                except Exception as e:
-                    self.log_message('ERROR', f"处理邮件 {email_id} 时出错", str(e))
+            # 关闭连接
+            email_provider.close_connections()
             
-            # 断开连接
-            client.disconnect()
-            
-            self.log_message('INFO', f"成功获取 {len(emails)} 封邮件")
             return emails
             
         except Exception as e:
@@ -301,7 +252,7 @@ class EmailSyncAction:
                     "fields": {
                         "邮件ID": email.get('id', ''),  # 邮件ID字段
                         "主题": email.get('subject', '')[:500],  # 主题字段
-                        "发件人": email.get('from', '')[:200],   # 发件人字段
+                        "发件人": email.get('sender', '')[:200],   # 发件人字段
                         "邮件内容": (email.get('body', '') or '')[:2000],  # 邮件内容字段
                     }
                 }
@@ -310,33 +261,12 @@ class EmailSyncAction:
                 if date_timestamp:
                     record["fields"]["日期"] = date_timestamp
                 
-                # 处理附件信息 - 上传到Drive并获取file_token
-                attachments = email.get('attachments', [])
-                if attachments:
-                    attachment_tokens = []
-                    attachment_info = []
-                    
-                    for att in attachments:
-                        if isinstance(att, dict) and att.get('content'):
-                            # 上传附件到Drive
-                            file_token = self.upload_attachment_to_drive(att)
-                            if file_token:
-                                attachment_tokens.append({"file_token": file_token})
-                            
-                            # 记录附件信息用于日志
-                            att_name = att.get('filename', '未知附件')
-                            att_size = att.get('size', 0)
-                            attachment_info.append(f"{att_name} ({att_size} bytes)")
-                    
-                    # 如果有成功上传的附件，添加到附件字段
-                    if attachment_tokens:
-                        record["fields"]["附件"] = attachment_tokens
-                    
-                    # 同时将附件信息追加到邮件内容中作为备份
-                    if attachment_info:
-                        current_content = record["fields"]["邮件内容"]
-                        attachment_text = "\n\n附件信息:\n" + "\n".join(attachment_info)
-                        record["fields"]["邮件内容"] = (current_content + attachment_text)[:2000]
+                # 处理附件信息（新的邮件提供商架构中，附件信息通过has_attachments字段提供）
+                if email.get('has_attachments', False):
+                    # 在邮件内容中添加附件标识
+                    current_content = record["fields"]["邮件内容"]
+                    attachment_text = "\n\n[此邮件包含附件]"
+                    record["fields"]["邮件内容"] = (current_content + attachment_text)[:2000]
                 
                 records.append(record)
             
@@ -391,8 +321,7 @@ class EmailSyncAction:
                     'success': True,
                     'message': message,
                     'synced_count': synced_count,
-                    'skipped_count': skipped_count,
-                    'response': response
+                    'skipped_count': skipped_count
                 }
             else:
                 error_msg = f"飞书API返回错误: {response.msg}"

@@ -86,8 +86,8 @@ Content-Type: application/json
 | personal_base_token | string | 是 | 飞书个人基础令牌 |
 | email_username | string | 是 | 邮箱用户名 |
 | email_password | string | 是 | 邮箱密码或应用专用密码 |
-| email_provider | string | 否 | 邮件提供商，默认为"feishu" |
-| email_count | integer | 否 | 获取邮件数量，默认为10 |
+| email_provider | string | 否 | 邮箱类型，支持: lark, feishu, gmail, google, qq, netease, 163，默认为"feishu" |
+| email_count | integer | 否 | 获取邮件数量，默认为50 |
 
 **请求示例：**
 ```json
@@ -96,8 +96,8 @@ Content-Type: application/json
   "personal_base_token": "pat_xxx",
   "email_username": "your-email@example.com",
   "email_password": "your-password",
-  "email_provider": "feishu",
-  "email_count": 20
+  "email_provider": "gmail",
+  "email_count": 30
 }
 ```
 
@@ -140,8 +140,8 @@ curl -X POST http://localhost:5000/sync \
     "personal_base_token": "pat_xxx",
     "email_username": "your-email@example.com",
     "email_password": "your-password",
-    "email_provider": "feishu",
-    "email_count": 10
+    "email_provider": "qq",
+    "email_count": 25
   }'
 ```
 
@@ -157,8 +157,8 @@ data = {
     "personal_base_token": "pat_xxx",
     "email_username": "your-email@example.com",
     "email_password": "your-password",
-    "email_provider": "feishu",
-    "email_count": 10
+    "email_provider": "netease",
+    "email_count": 20
 }
 
 response = requests.post(url, json=data)
@@ -185,8 +185,8 @@ const syncEmails = async () => {
       personal_base_token: 'pat_xxx',
       email_username: 'your-email@example.com',
       email_password: 'your-password',
-      email_provider: 'feishu',
-      email_count: 10
+      email_provider: 'gmail',
+      email_count: 15
     })
   });
   

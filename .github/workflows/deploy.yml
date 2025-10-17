@@ -46,6 +46,8 @@ jobs:
       run: |
         python -c "import sys; print('Python version:', sys.version)"
         python -c "from douyin_sync_action import DouyinVideoSyncer; print('DouyinVideoSyncer imported successfully')"
+        python -c "from email_sync_action import EmailSyncAction; print('EmailSyncAction imported successfully')"
+        python -c "from email_providers import EmailProviderFactory; print('EmailProviderFactory imported successfully')"
         python -c "from app import app; print('Flask app imported successfully')"
     
     - name: Test Flask app
@@ -53,6 +55,7 @@ jobs:
         export FLASK_APP=app.py
         export FLASK_ENV=testing
         python -c "from app import app; client = app.test_client(); response = client.get('/health'); print('Health check status:', response.status_code)"
+        python -c "from app import app; client = app.test_client(); response = client.get('/api/providers'); print('Providers API status:', response.status_code)"
 
   deploy:
     needs: test

@@ -71,7 +71,8 @@ def index():
                 'health': '/health',
                 'sync_douyin': '/api/sync/douyin',
                 'sync_email': '/api/sync/email',
-                'status': '/api/status'
+                'status': '/api/status',
+                'supported_providers': '/api/providers'
             }
     })
 
@@ -164,6 +165,19 @@ def sync_emails():
                 'message': '邮件同步失败'
             }), 400
         
+        # 验证邮箱类型
+        email_provider = data.get('email_provider', 'feishu')
+        from email_providers import EmailProviderFactory
+        supported_providers = EmailProviderFactory.get_supported_providers()
+        
+        if email_provider not in supported_providers:
+            return jsonify({
+                'success': False,
+                'error': f'不支持的邮箱类型: {email_provider}. 支持的类型: {supported_providers}',
+                'timestamp': datetime.now().isoformat(),
+                'message': '邮件同步失败'
+            }), 400
+        
         logger.info(f"开始邮件同步，目标表格: {data['bitable_url']}")
         
         # 创建同步器实例，传入完整配置
@@ -231,6 +245,36 @@ def get_status():
         return jsonify({
             'status': 'error',
             'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
+@app.route('/api/providers', methods=['GET'])
+def get_supported_providers():
+    """获取支持的邮箱提供商列表"""
+    try:
+        from email_providers import EmailProviderFactory
+        providers = EmailProviderFactory.get_supported_providers()
+        
+        # 提供商详细信息
+        provider_details = {
+            'lark': {'name': '飞书邮箱', 'server': 'imap.feishu.cn'},
+            'feishu': {'name': '飞书邮箱', 'server': 'imap.feishu.cn'},
+            'gmail': {'name': 'Gmail', 'server': 'imap.gmail.com'},
+            'google': {'name': 'Gmail', 'server': 'imap.gmail.com'},
+            'qq': {'name': 'QQ邮箱', 'server': 'imap.qq.com'},
+            'netease': {'name': '网易邮箱', 'server': 'imap.163.com'},
+            '163': {'name': '网易邮箱', 'server': 'imap.163.com'}
+        }
+        
+        return jsonify({
+            'supported_providers': providers,
+            'provider_details': {p: provider_details.get(p, {'name': p, 'server': 'unknown'}) for p in providers},
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'获取提供商列表失败: {str(e)}',
             'timestamp': datetime.now().isoformat()
         }), 500
 
