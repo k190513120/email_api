@@ -139,20 +139,16 @@ def sync_emails():
 def get_status():
     """获取服务状态"""
     try:
-        # 检查模块状态
-        module_status = {
-            'douyin_syncer_loaded': DouyinVideoSync is not None,
-            'email_syncer_loaded': EmailSyncAction is not None
-        }
-        
-        # 两个模块都加载成功才认为服务完全可用
-        all_modules_ready = DouyinVideoSync is not None and EmailSyncAction is not None
+        # 检查邮件同步模块状态
+        email_syncer_ready = EmailSyncAction is not None
         
         return jsonify({
-            'status': 'ready' if all_modules_ready else 'not_ready',
-            'modules': module_status,
+            'status': 'ready' if email_syncer_ready else 'not_ready',
+            'modules': {
+                'email_syncer_loaded': email_syncer_ready
+            },
             'timestamp': datetime.now().isoformat(),
-            'message': '所有配置通过HTTP请求参数传递，无需环境变量配置'
+            'message': '邮件同步服务已就绪，所有配置通过HTTP请求参数传递'
         }), 200
         
     except Exception as e:
