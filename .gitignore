@@ -16,11 +16,10 @@ parts/
 sdist/
 var/
 wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-PYTHONPATH
+MANIFEST
 
 # PyInstaller
 *.manifest
@@ -33,17 +32,14 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
-.nox/
 .coverage
 .coverage.*
 .cache
 nosetests.xml
 coverage.xml
 *.cover
-*.py,cover
 .hypothesis/
 .pytest_cache/
-cover/
 
 # Translations
 *.mo
@@ -53,7 +49,6 @@ cover/
 *.log
 local_settings.py
 db.sqlite3
-db.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -66,34 +61,16 @@ instance/
 docs/_build/
 
 # PyBuilder
-.pybuilder/
 target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# IPython
-profile_default/
-ipython_config.py
-
 # pyenv
 .python-version
 
-# pipenv
-Pipfile.lock
-
-# poetry
-poetry.lock
-
-# pdm
-.pdm.toml
-
-# PEP 582
-__pypackages__/
-
-# Celery stuff
+# celery beat schedule file
 celerybeat-schedule
-celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
@@ -122,104 +99,41 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
-
-# PyCharm
-.idea/
-
-# VS Code
+# IDE
 .vscode/
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-*.lnk
-
-# Linux
-*~
-
-# Temporary files
-*.tmp
-*.temp
+.idea/
 *.swp
 *.swo
 *~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Logs
 *.log
 logs/
 
-# Configuration files with sensitive data
-config.json
-.env
-*.key
-*.pem
-*.p12
-*.pfx
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
 
-# Sync result files
-sync_result.json
-sync_logs.json
-feishu_test_result.json
-
-# Node.js (for any frontend components)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Docker
-.dockerignore
-
-# Koyeb
-.koyeb/
+# Local configuration
+config.local.py
+settings.local.py
 
 # Test files
 test_*.py
 *_test.py
 tests/
 
-# Backup files
-*.bak
-*.backup
-*.old
-
-# Editor files
-*.sublime-project
-*.sublime-workspace
-
-# OS generated files
-.directory
-.fuse_hidden*
-.nfs*
-.Trash-*
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+# Documentation
+docs/
+*.md.backup

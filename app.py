@@ -9,7 +9,7 @@ import logging
 # 添加当前目录到Python路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# 导入同步模块
+# 导入基础依赖
 try:
     import sys
     print(f"Python版本: {sys.version}")
@@ -26,13 +26,10 @@ try:
     from baseopensdk.api.base.v1 import *
     print("✓ baseopensdk.api.base.v1导入成功")
     
-    from douyin_sync_action import DouyinVideoSync
-    print("✓ DouyinVideoSync导入成功")
 except ImportError as e:
     import traceback
-    print(f"导入抖音同步模块错误: {e}")
+    print(f"导入基础依赖错误: {e}")
     print(f"错误详情: {traceback.format_exc()}")
-    DouyinVideoSync = None
 
 # 导入邮件同步模块
 try:
@@ -58,7 +55,10 @@ def health_check():
     return jsonify({
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
-        'service': 'lark-email-sync'
+        'version': '1.0.0',
+        'services': {
+            'email_sync': EmailSyncAction is not None
+        }
     }), 200
 
 @app.route('/', methods=['GET'])
@@ -69,75 +69,13 @@ def index():
         'version': '1.0.0',
         'endpoints': {
                 'health': '/health',
-                'sync_douyin': '/api/sync/douyin',
                 'sync_email': '/api/sync/email',
                 'status': '/api/status',
                 'supported_providers': '/api/providers'
             }
     })
 
-@app.route('/api/sync/douyin', methods=['POST'])
-def sync_douyin_videos():
-    """触发抖音视频同步"""
-    try:
-        if DouyinVideoSync is None:
-            return jsonify({
-                'success': False,
-                'error': '抖音同步模块未正确加载',
-                'timestamp': datetime.now().isoformat()
-            }), 500
-        
-        # 获取请求参数
-        data = request.get_json() or {}
-        
-        # 验证必需参数
-        required_params = ['douyin_url', 'bitable_url', 'personal_base_token']
-        missing_params = [param for param in required_params if not data.get(param)]
-        
-        if missing_params:
-            return jsonify({
-                'success': False,
-                'error': f'缺少必需参数: {", ".join(missing_params)}',
-                'timestamp': datetime.now().isoformat(),
-                'message': '抖音视频同步失败'
-            }), 400
-        
-        sync_count = data.get('sync_count', 15)
-        
-        logger.info(f"开始抖音视频同步，URL: {data['douyin_url']}, 数量: {sync_count}")
-        
-        # 创建同步器实例
-        syncer = DouyinVideoSync(data['personal_base_token'])
-        
-        # 执行同步
-        result = syncer.sync_videos_to_table(
-            douyin_url=data['douyin_url'],
-            bitable_url=data['bitable_url'],
-            count=sync_count
-        )
-        
-        logger.info(f"同步完成: {result}")
-        
-        return jsonify({
-            'success': True,
-            'data': result,
-            'timestamp': datetime.now().isoformat(),
-            'message': '抖音视频同步完成'
-        }), 200
-        
-    except Exception as e:
-        error_msg = str(e)
-        error_trace = traceback.format_exc()
-        
-        logger.error(f"同步失败: {error_msg}")
-        logger.error(f"错误堆栈: {error_trace}")
-        
-        return jsonify({
-            'success': False,
-            'error': error_msg,
-            'timestamp': datetime.now().isoformat(),
-            'message': '抖音视频同步失败'
-        }), 500
+
 
 @app.route('/api/sync/email', methods=['POST'])
 def sync_emails():

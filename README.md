@@ -1,177 +1,76 @@
-# 飞书邮件同步服务
+# 飞书邮件同步 API
 
-一个支持多种邮箱类型的自动化同步服务，可以将邮件数据同步到飞书多维表格中。同时支持抖音视频数据同步功能。
+这是一个用于同步飞书邮箱邮件到飞书多维表格的 Python API 服务。
 
 ## 功能特性
 
-- 📧 **多邮箱支持**: 支持飞书邮箱、Gmail、QQ邮箱、网易邮箱等多种邮箱类型
-- 🎬 **抖音视频同步**: 自动获取抖音视频数据并同步到飞书多维表格
-- 📊 **数据字段完整**: 支持邮件主题、发件人、正文、附件等完整字段
-- 🔄 **增量同步**: 智能识别新邮件，避免重复同步
-- 🌐 **HTTP API**: 提供RESTful API接口，支持远程触发同步
-- 🐳 **容器化部署**: 支持Docker容器化部署
-- ☁️ **云端部署**: 支持Koyeb、Render等平台一键部署
-- 🔧 **自动化CI/CD**: 集成GitHub Actions自动部署
+- 支持多种邮箱提供商（飞书、Gmail、QQ、163、Outlook等）
+- 自动同步邮件到飞书多维表格
+- RESTful API 接口
+- 支持 Docker 部署
+- 支持 Koyeb 云平台部署
 
-## 快速开始
+## API 接口
 
-### 1. 准备工作
+### 健康检查
+```
+GET /health
+```
 
-#### 1.1 获取飞书多维表格信息
+### 邮件同步
+```
+POST /api/sync/email
+```
 
-1. 在飞书中创建或打开一个多维表格
-2. 复制多维表格的URL，格式类似：`https://example.feishu.cn/base/bascnxxx?table=tblxxx`
-3. 在飞书开放平台创建应用，获取 `App Token` 和 `Personal Base Token`
+请求参数：
+```json
+{
+  "personal_base_token": "你的飞书个人基础令牌",
+  "bitable_url": "多维表格URL",
+  "email_username": "邮箱用户名",
+  "email_password": "邮箱密码",
+  "email_provider": "邮箱提供商（feishu/gmail/qq/163/outlook）",
+  "email_count": 50
+}
+```
 
-#### 1.2 准备邮箱授权
+### 获取支持的邮箱提供商
+```
+GET /api/providers
+```
 
-支持的邮箱类型及配置说明：
+## 部署到 Koyeb
 
-| 邮箱类型 | 标识符 | IMAP服务器 | 端口 | 授权说明 |
-|---------|--------|-----------|------|----------|
-| 飞书邮箱 | `lark` 或 `feishu` | imap.feishu.cn | 993 | 使用邮箱密码或应用专用密码 |
-| Gmail | `gmail` 或 `google` | imap.gmail.com | 993 | 需要开启两步验证并生成应用专用密码 |
-| QQ邮箱 | `qq` | imap.qq.com | 993 | 需要开启IMAP服务并使用授权码 |
-| 网易邮箱 | `netease` 或 `163` | imap.163.com | 993 | 需要开启IMAP服务并使用授权码 |
+1. 将代码推送到 GitHub 仓库
+2. 在 Koyeb 控制台创建新应用
+3. 连接 GitHub 仓库
+4. 使用提供的 `koyeb.yaml` 配置文件
+5. 部署应用
 
-**注意事项**：
-- Gmail需要在Google账户设置中开启两步验证，然后生成应用专用密码
-- QQ邮箱和网易邮箱需要在邮箱设置中开启IMAP服务，并生成授权码
-- 飞书邮箱可以直接使用登录密码，或在安全设置中生成应用专用密码
+## 本地开发
 
-
-
-### 2. 使用GitHub Actions
-
-#### 2.1 Fork或下载此仓库
-
-将此仓库fork到你的GitHub账号，或者下载代码到你的仓库中。
-
-#### 2.2 运行工作流
-
-1. 进入你的GitHub仓库
-2. 点击 `Actions` 标签
-3. 选择 `Email to Feishu Bitable Sync` 工作流
-4. 点击 `Run workflow` 按钮
-5. 填入以下参数：
-
-| 参数名 | 描述 | 示例 |
-|--------|------|------|
-| 飞书多维表格URL | 多维表格的完整URL | `https://example.feishu.cn/base/bascnxxx?table=tblxxx` |
-| 飞书应用Token | 飞书开放平台应用的Token | `cli_a1b2c3d4e5f6...` |
-| 飞书个人基础Token | 个人基础Token | `u-7g8h9i0j1k2l...` |
-| 邮箱用户名 | 邮箱完整地址 | `user@example.com` |
-| 邮箱授权码 | 邮箱密码或授权码 | `your_password_or_auth_code` |
-| 邮箱类型 | 邮箱提供商类型 | `lark`, `gmail`, `qq`, `netease` 等 |
-| 获取邮件数量 | 要同步的邮件数量 | `50` (默认) |
-
-6. 点击 `Run workflow` 开始执行
-
-### 3. 查看结果
-
-#### 3.1 GitHub Actions日志
-
-在Actions页面可以查看详细的执行日志，包括：
-- 邮箱连接状态
-- 邮件获取进度
-- 飞书同步结果
-- 错误信息（如果有）
-
-#### 3.2 下载结果文件
-
-工作流执行完成后，会生成以下文件供下载：
-- `sync_result.json`: 同步结果详情
-- `sync_logs.json`: 详细的执行日志
-
-
-
-## 多维表格字段说明
-
-同步到飞书多维表格的字段包括：
-
-| 字段名 | 类型 | 描述 |
-|--------|------|------|
-| 主题 | 文本 | 邮件主题 |
-| 发件人 | 文本 | 发件人邮箱地址 |
-| 收件人 | 文本 | 收件人邮箱地址 |
-| 日期 | 文本 | 邮件发送日期 |
-| 正文 | 文本 | 邮件正文内容（限制1000字符） |
-| 邮件ID | 文本 | 邮件的唯一标识 |
-| 同步时间 | 文本 | 数据同步的时间戳 |
-
-## 本地测试
-
-### 测试邮箱连接
-
+1. 安装依赖：
 ```bash
-python3 imap_email_test.py
+pip install -r requirements.txt
 ```
 
-
-
-### 完整流程测试
-
+2. 运行应用：
 ```bash
-# 设置环境变量
-export BITABLE_URL="your_bitable_url"
-export APP_TOKEN="your_app_token"
-export PERSONAL_BASE_TOKEN="your_personal_token"
-export EMAIL_USERNAME="your_email"
-export EMAIL_PASSWORD="your_password"
-export EMAIL_PROVIDER="feishu"
-
-export EMAIL_COUNT="5"
-
-# 运行同步脚本
-python3 email_sync_action.py
+python app.py
 ```
 
-## 故障排除
+应用将在 http://localhost:8000 启动。
 
-### 常见问题
+## 环境变量
 
-1. **邮箱连接失败**
-   - 检查邮箱用户名和密码是否正确
-   - 确认已开启IMAP服务
-   - 对于Gmail等邮箱，需要使用应用专用密码
+- `PORT`: 应用端口（默认：8000）
+- `FLASK_ENV`: Flask 环境（development/production）
 
-2. **飞书同步失败**
-   - 检查多维表格URL格式是否正确
-   - 确认App Token和Personal Base Token有效
-   - 检查应用是否有多维表格的访问权限
+## 支持的邮箱提供商
 
-
-
-### 调试技巧
-
-1. 先使用较小的邮件数量（如1-2封）进行测试
-2. 查看GitHub Actions的详细日志
-3. 下载并检查生成的结果文件
-
-
-## 安全注意事项
-
-1. **不要在代码中硬编码敏感信息**：所有敏感信息都通过GitHub Actions的输入参数传递
-2. **使用授权码而非密码**：对于支持的邮箱服务，建议使用应用专用密码或授权码
-3. **限制飞书应用权限**：只授予必要的多维表格访问权限
-
-
-## 技术架构
-
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   GitHub        │    │   IMAP邮箱       │    │   飞书多维表格   │
-│   Actions       │───▶│   服务器         │───▶│   (Bitable)     │
-│                 │    │                  │    │                 │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-         │                                               │
-
-```
-
-## 许可证
-
-MIT License
-
-## 贡献
-
-欢迎提交Issue和Pull Request来改进这个项目！
+- 飞书邮箱 (feishu)
+- Lark 邮箱 (lark)
+- Gmail (gmail)
+- QQ 邮箱 (qq)
+- 163 邮箱 (163)
+- Outlook (outlook)
