@@ -56,20 +56,20 @@ def index():
 
 @app.route('/api/sync/email', methods=['POST'])
 def sync_emails():
-    """触发邮件同步"""
+    """触发邮件获取"""
     try:
         if EmailSyncAction is None:
             return jsonify({
                 'success': False,
-                'error': '邮件同步模块未正确加载',
+                'error': '邮件获取模块未正确加载',
                 'timestamp': datetime.now().isoformat()
             }), 500
         
         # 获取请求参数
         data = request.get_json() or {}
         
-        # 验证必需参数
-        required_params = ['personal_base_token', 'bitable_url', 'email_username', 'email_password']
+        # 验证必需参数（仅邮件相关）
+        required_params = ['email_username', 'email_password']
         missing_params = [param for param in required_params if not data.get(param)]
         
         if missing_params:
@@ -77,11 +77,11 @@ def sync_emails():
                 'success': False,
                 'error': f'缺少必需参数: {", ".join(missing_params)}',
                 'timestamp': datetime.now().isoformat(),
-                'message': '邮件同步失败'
+                'message': '邮件获取失败'
             }), 400
         
         # 验证邮箱类型
-        email_provider = data.get('email_provider', 'feishu')
+        email_provider = data.get('provider', data.get('email_provider', 'feishu'))
         from email_providers import EmailProviderFactory
         supported_providers = EmailProviderFactory.get_supported_providers()
         
@@ -90,29 +90,27 @@ def sync_emails():
                 'success': False,
                 'error': f'不支持的邮箱类型: {email_provider}. 支持的类型: {supported_providers}',
                 'timestamp': datetime.now().isoformat(),
-                'message': '邮件同步失败'
+                'message': '邮件获取失败'
             }), 400
         
-        logger.info(f"开始邮件同步，目标表格: {data['bitable_url']}")
+        logger.info(f"开始邮件获取，用户: {data['email_username']}")
         
-        # 创建同步器实例，传入完整配置
+        # 创建邮件获取器实例，传入配置
         config = {
-            'personal_base_token': data['personal_base_token'],
-            'bitable_url': data['bitable_url'],
             'email_username': data['email_username'],
             'email_password': data['email_password'],
-            'email_provider': data.get('email_provider', 'feishu'),
-            'email_count': data.get('email_count', 50)  # 修改默认值为50
+            'email_provider': email_provider,
+            'email_count': data.get('email_count', 50)
         }
         
-        logger.info(f"邮件同步配置 - 用户: {config['email_username']}, 数量: {config['email_count']}, 提供商: {config['email_provider']}")
+        logger.info(f"邮件获取配置 - 用户: {config['email_username']}, 数量: {config['email_count']}, 提供商: {config['email_provider']}")
         
         syncer = EmailSyncAction(config)
         
-        # 执行同步
-        result = syncer.run_sync()
+        # 执行邮件获取
+        result = syncer.sync_emails()
         
-        logger.info(f"邮件同步完成: {result}")
+        logger.info(f"邮件获取完成: {result}")
         
         return jsonify({
             'success': True,
