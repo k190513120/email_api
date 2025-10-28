@@ -89,7 +89,7 @@ class EmailSyncAction:
             self.log_message('INFO', "邮箱服务器连接成功")
             
             # 获取邮件
-            emails = email_provider.get_emails(self.config['email_count'])
+            emails = email_provider.get_emails(count=self.config['email_count'])
             self.log_message('INFO', f"成功获取 {len(emails)} 封邮件")
             
             # 断开连接
@@ -126,8 +126,8 @@ class EmailSyncAction:
                         'subject': email.get('subject', ''),
                         'sender': email.get('sender', ''),
                         'date': email.get('date', ''),
-                        'content': email.get('content', ''),
-                        'attachments': email.get('attachments', [])
+                        'body': email.get('body', ''),
+                        'has_attachments': email.get('has_attachments', False)
                     }
                     processed_emails.append(processed_email)
                     

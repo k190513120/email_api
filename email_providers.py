@@ -155,6 +155,14 @@ class EmailProvider(ABC):
             'has_attachments': len([part for part in email_message.walk() if part.get_filename()]) > 0
         }
     
+    def connect(self) -> bool:
+        """连接到邮箱服务器（IMAP）"""
+        return self.connect_imap()
+    
+    def disconnect(self):
+        """断开连接"""
+        self.close_connections()
+    
     def close_connections(self):
         """关闭连接"""
         if self.imap_client:
