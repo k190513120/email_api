@@ -9,34 +9,11 @@ import logging
 # 添加当前目录到Python路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# 导入基础依赖
-try:
-    import sys
-    print(f"Python版本: {sys.version}")
-    print(f"当前工作目录: {os.getcwd()}")
-    print(f"Python路径: {sys.path[:3]}")
-    
-    # 测试基础依赖
-    import requests
-    print("✓ requests导入成功")
-    
-    from baseopensdk import BaseClient
-    print("✓ BaseClient导入成功")
-    
-    from baseopensdk.api.base.v1 import *
-    print("✓ baseopensdk.api.base.v1导入成功")
-    
-except ImportError as e:
-    import traceback
-    print(f"导入基础依赖错误: {e}")
-    print(f"错误详情: {traceback.format_exc()}")
-
 # 导入邮件同步模块
 try:
     from email_sync_action import EmailSyncAction
-    print("✓ EmailSyncAction导入成功")
 except ImportError as e:
-    print(f"导入邮件同步模块错误: {e}")
+    logger.error(f"导入邮件同步模块错误: {e}")
     EmailSyncAction = None
 
 app = Flask(__name__)
@@ -216,26 +193,7 @@ def get_supported_providers():
             'timestamp': datetime.now().isoformat()
         }), 500
 
-@app.route('/api/debug', methods=['GET'])
-def get_debug_info():
-    """获取调试信息"""
-    try:
-        import sys
-        import os
-        
-        return jsonify({
-            'python_version': sys.version,
-            'current_directory': os.getcwd(),
-            'douyin_syncer_loaded': DouyinVideoSync is not None,
-            'email_syncer_loaded': EmailSyncAction is not None,
-            'timestamp': datetime.now().isoformat()
-        })
-        
-    except Exception as e:
-        return jsonify({
-            'error': f'调试端点错误: {str(e)}',
-            'timestamp': datetime.now().isoformat()
-        }), 500
+
 
 @app.errorhandler(404)
 def not_found(error):

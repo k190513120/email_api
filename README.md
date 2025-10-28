@@ -1,21 +1,16 @@
 # 飞书邮件同步 API
 
-这是一个用于同步飞书邮箱邮件到飞书多维表格的 Python API 服务。
+一个简洁的 Python Flask API 服务，用于同步邮件数据到飞书多维表格。
 
 ## 功能特性
 
-- 支持多种邮箱提供商（飞书、Gmail、QQ、163、Outlook等）
+- 支持多种邮箱提供商（Gmail、QQ邮箱、网易邮箱、Outlook、飞书邮箱）
 - 自动同步邮件到飞书多维表格
 - RESTful API 接口
-- 支持 Docker 部署
+- Docker 容器化部署
 - 支持 Koyeb 云平台部署
 
 ## API 接口
-
-### 健康检查
-```
-GET /health
-```
 
 ### 邮件同步
 ```
@@ -25,52 +20,47 @@ POST /api/sync/email
 请求参数：
 ```json
 {
-  "personal_base_token": "你的飞书个人基础令牌",
-  "bitable_url": "多维表格URL",
-  "email_username": "邮箱用户名",
-  "email_password": "邮箱密码",
-  "email_provider": "邮箱提供商（feishu/gmail/qq/163/outlook）",
-  "email_count": 50
+  "email_username": "your@email.com",
+  "email_password": "your_password",
+  "email_provider": "gmail",
+  "email_count": 10,
+  "personal_base_token": "your_feishu_token",
+  "bitable_url": "https://your_feishu_bitable_url"
 }
 ```
 
-### 获取支持的邮箱提供商
-```
-GET /api/providers
-```
+### 其他接口
+- `GET /health` - 健康检查
+- `GET /api/status` - 服务状态
+- `GET /api/providers` - 支持的邮箱提供商
 
-## 部署到 Koyeb
+## 部署
 
-1. 将代码推送到 GitHub 仓库
-2. 在 Koyeb 控制台创建新应用
-3. 连接 GitHub 仓库
-4. 使用提供的 `koyeb.yaml` 配置文件
-5. 部署应用
+### Koyeb 部署
+1. Fork 此仓库到你的 GitHub 账户
+2. 在 Koyeb 控制台创建新的 Web 服务
+3. 选择 GitHub 作为部署方式
+4. 选择你的仓库和 main 分支
+5. 设置运行命令：`gunicorn --bind 0.0.0.0:8000 --workers 2 app:app`
+6. 设置端口：8000
+7. 部署完成
 
-## 本地开发
-
-1. 安装依赖：
+### 本地开发
 ```bash
 pip install -r requirements.txt
-```
-
-2. 运行应用：
-```bash
 python app.py
 ```
 
-应用将在 http://localhost:8000 启动。
-
-## 环境变量
-
-- `PORT`: 应用端口（默认：8000）
-- `FLASK_ENV`: Flask 环境（development/production）
-
 ## 支持的邮箱提供商
 
-- 飞书邮箱 (feishu)
-- Lark 邮箱 (lark)
-- Gmail (gmail)
-- QQ 邮箱 (qq)
-- 163 邮箱 (163)
-- Outlook (outlook)
+- Gmail
+- QQ邮箱
+- 网易邮箱（163）
+- Outlook
+- 飞书邮箱
+
+## 注意事项
+
+- 请确保邮箱已开启 IMAP 服务
+- 使用应用专用密码而非账户密码
+- 飞书 token 需要有多维表格的读写权限
