@@ -68,11 +68,11 @@ def index():
         'message': '飞书邮件同步服务',
         'version': '1.0.0',
         'endpoints': {
-                'health': '/health',
-                'sync_email': '/api/sync/email',
-                'status': '/api/status',
-                'supported_providers': '/api/providers'
-            }
+            'health': '/health',
+            'status': '/api/status',
+            'supported_providers': '/api/providers',
+            'sync_email': '/api/sync/email'
+        }
     })
 
 
