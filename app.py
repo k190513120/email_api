@@ -6,6 +6,13 @@ import traceback
 from datetime import datetime
 import logging
 
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 # 添加当前目录到Python路径
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -18,13 +25,6 @@ except ImportError as e:
 
 app = Flask(__name__)
 CORS(app)  # 启用跨域支持
-
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 @app.route('/health', methods=['GET'])
 def health_check():

@@ -3,10 +3,10 @@ Flask==2.3.3
 Flask-CORS==4.0.0
 gunicorn==21.2.0
 
-# 飞书SDK
-https://lf3-static.bytednsdoc.com/obj/eden-cn/lmeh7phbozvhoz/base-open-sdk/baseopensdk-0.0.13-py3-none-any.whl
-PyJWT==2.8.0
-cryptography==41.0.7
+# 飞书SDK (已移除，仅保留邮件获取功能)
+# https://lf3-static.bytednsdoc.com/obj/eden-cn/lmeh7phbozvhoz/base-open-sdk/baseopensdk-0.0.13-py3-none-any.whl
+# PyJWT==2.8.0
+# cryptography==41.0.7
 
 # HTTP请求
 requests==2.31.0
