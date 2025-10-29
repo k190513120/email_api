@@ -146,13 +146,60 @@ class EmailProvider(ABC):
             except:
                 body = str(email_message.get_payload())
         
+        # 提取附件详细信息
+        attachments = []
+        try:
+            for part in email_message.walk():
+                filename = part.get_filename()
+                if filename:
+                    # 解码文件名
+                    decoded_filename = decode_mime_words(filename)
+                    
+                    # 获取附件二进制内容
+                    content = part.get_payload(decode=True)
+                    if not content:
+                        continue
+                        
+                    file_size = len(content)
+                    
+                    # 检查文件大小限制（飞书限制2GB）
+                    max_size = 1024 * 1024 * 1024 * 2  # 2GB
+                    if file_size > max_size:
+                        logger.warning(f"附件 {decoded_filename} 大小 {file_size} 超过限制 {max_size}，跳过")
+                        continue
+                    
+                    # 检查文件名长度限制（飞书限制250字符）
+                    if len(decoded_filename) > 250:
+                        logger.warning(f"附件文件名 {decoded_filename} 长度超过250字符，截断")
+                        decoded_filename = decoded_filename[:247] + "..."
+                    
+                    # 获取MIME类型
+                    content_type = part.get_content_type()
+                    
+                    # 将二进制内容转换为base64编码以便传输
+                    import base64
+                    content_base64 = base64.b64encode(content).decode('utf-8')
+                    
+                    attachment_info = {
+                        'filename': decoded_filename,
+                        'size': file_size,
+                        'content_type': content_type,
+                        'content': content_base64  # 添加base64编码的文件内容
+                    }
+                    attachments.append(attachment_info)
+        except Exception as e:
+            logger.error(f"解析附件信息失败: {str(e)}")
+            # 如果解析失败，保持空列表，不影响整体功能
+            attachments = []
+        
         return {
             'subject': subject,
             'sender': sender,
             'recipient': recipient,
             'date': date,
             'body': body[:1000] if body else "",  # 限制正文长度
-            'has_attachments': len([part for part in email_message.walk() if part.get_filename()]) > 0
+            'attachments': attachments,  # 改为附件详细信息数组
+            'has_attachments': len(attachments) > 0  # 保持向后兼容性
         }
     
     def connect(self) -> bool:
