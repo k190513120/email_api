@@ -127,7 +127,8 @@ class EmailSyncAction:
                         'sender': email.get('sender', ''),
                         'date': email.get('date', ''),
                         'body': email.get('body', ''),
-                        'has_attachments': email.get('has_attachments', False)
+                        'has_attachments': email.get('has_attachments', False),
+                        'attachments': email.get('attachments', [])  # 添加附件详细信息
                     }
                     processed_emails.append(processed_email)
                     
